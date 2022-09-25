@@ -1,50 +1,41 @@
 <!DOCTYPE html>
 <html lang="ko" dir="ltr">
   <head>
-    <style media="screen">
-      .div1{height: 500px; width: 700px; background-color: Yellowgreen;
-      }
-      /* #p1{height: 300px; width: 300px;}
-      #p2{height: 300px; width: 300px;}
-      #p3{height: 300px; width: 300px;}
-      #p4{height: 300px; width: 300px;}
-      #p5{height: 300px; width: 300px;} */
+    <style>
+    .all{margin: 0; padding: 0; text-align: center;}
     </style>
-    <meta charset="utf-8">
-    <title></title>
+      <meta charset="utf-8">
+      <title></title>
   </head>
   <body>
-<div class="div">
-  <div class="img">
-    <img id="p1" src="Picture/커비1.jpg" alt="">
-    <!-- <img id="p2" src="Picture/커비2.jpg" alt="">
-    <img id="p3" src="Picture/커비3.jpg" alt="">
-    <img id="p4" src="Picture/커비4.jpg" alt="">
-    <img id="p5" src="Picture/커비5.jpg" alt=""> -->
-  </div>
-  <div class="button">
-    <button type="button" name="left">◀</button>
-    <button type="button" name="right">▶</button>
-  </div>
-</div>
-  </body>
+    <div class="all">
+      <img id=img src="Picture/커비1.jpg" alt="" style="width:200px; height:200px;">
+<p></p>
+      <button onclick="change(0);" type="button" name="button">◀</button>
+      <button onclick="change(1);" type="button" name="button">▶</button>
+    </div>
+
   <script>
-    var img = ["Picture/커비1.jpg", "Picture/커비2.jpg", "Picture/커비3.jpg","Picture/커비4.jpg", "Picture/커비5.jpg"]
-    var btn = document.getElementsByClass('button');
+    var num = 1;
 
-    var imgs = new Array();
-    for(var i=0; i<img.length; i++)
-    {
-      imgs[i] = new Image();
-      imgs[i].src = img[i];
-    }
+    function change(e) {
+      if(e)
+      {
+        if(num==5)
+        return;
+        num++;
+      }
+      else
+      {
+        if(num==1)
+        return;
+        num--;
+      }
+        var imgs = document.getElementById("img");
+        imgs.setAttribute("src", "Picture/커비"+num+".jpg");
+      }
 
-    var next = 1;
 
-    if()
-    {function (e) {
-      imgs[i].src = imgs[next].src;
 
-    }}
   </script>
 </html>

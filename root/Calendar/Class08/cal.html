@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  <head>
+<style>
+*{margin: 0; padding: 0; font-family: sans-serif; box-sizing: border-box;}
+
+body{display: flex; justify-content: center; align-items: center; min-height: 100vh;}
+
+.calendar{width: 600px; margin: 50px;}
+
+.header{display: flex; justify-content: space-between; align-items: center;}
+
+.year-month{font-size: 35px;}
+a{text-decoration: none; color: black;}
+
+.nav{display: flex; border: 1px solid black; border-radius: 5px;}
+
+.nav-btn{width: 28px; height: 30px; border: none; font-size: 16px; line-height: 34px; background-color: transparent; cursor: pointer;}
+
+.go-today{width: 75px; border-left: 1px solid black; border-right: 1px solid black;}
+
+.days{display: flex; margin: 25px 0 10px;}
+.day{width: calc(100% / 7); text-align: center;}
+
+.dates{display: flex; flex-flow: row wrap; height: 500px; border-top: 1px solid black; border-right: 1px solid black;}
+.date{width: calc(100% / 7); padding: 15px; text-align: right; border-bottom: 1px solid black; border-left: 1px solid black;}
+
+.other{opacity: 0.3;}
+
+.today{position: relative; color: white;}
+
+.today::before {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; width: 30px;
+  height: 30px; display: block; background-color: red; border-radius: 50%; content: '';}
+</style>
+
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div class="calendar">
+       <div class="header">
+         <a href="month.html"> <div class="year-month"></div></a>
+         <div class="nav">
+           <button class="nav-btn go-prev" onclick="prevMonth()">◀</button>
+           <button class="nav-btn go-today" onclick="goToday()">Today</button>
+           <button class="nav-btn go-next" onclick="nextMonth()">▶</button>
+         </div>
+       </div>
+       <div class="main">
+         <div class="days">
+           <div class="day">일</div>
+           <div class="day">월</div>
+           <div class="day">화</div>
+           <div class="day">수</div>
+           <div class="day">목</div>
+           <div class="day">금</div>
+           <div class="day">토</div>
+         </div>
+         <div class="dates"></div>
+       </div>
+     </div>
+
+<script>
+let date = new Date();
+
+const renderCalender = () => {
+  const viewYear = date.getFullYear();
+  const viewMonth = date.getMonth();
+
+  document.querySelector('.year-month').textContent = `${viewYear}년 ${viewMonth + 1}월`;
+
+  const prevLast = new Date(viewYear, viewMonth, 0);
+  const thisLast = new Date(viewYear, viewMonth + 1, 0);
+
+  const PLDate = prevLast.getDate();
+  const PLDay = prevLast.getDay();
+
+  const TLDate = thisLast.getDate();
+  const TLDay = thisLast.getDay();
+
+  const prevDates = [];
+  const thisDates = [...Array(TLDate + 1).keys()].slice(1);
+  const nextDates = [];
+
+  if (PLDay !== 6) {
+    for (let i = 0; i < PLDay + 1; i++) {
+      prevDates.unshift(PLDate - i);
+    }
+  }
+
+  for (let i = 1; i < 7 - TLDay; i++) {
+    nextDates.push(i);
+  }
+
+  const dates = prevDates.concat(thisDates, nextDates);
+  const firstDateIndex = dates.indexOf(1);
+  const lastDateIndex = dates.lastIndexOf(TLDate);
+
+  dates.forEach((date, i) => {
+    const condition = i >= firstDateIndex && i < lastDateIndex + 1
+                      ? 'this'
+                      : 'other';
+    dates[i] = `<div class="date"><span class=${condition}>${date}</span></div>`;
+  });
+
+  document.querySelector('.dates').innerHTML = dates.join('');
+
+  const today = new Date();
+  if (viewMonth === today.getMonth() && viewYear === today.getFullYear()) {
+    for (let date of document.querySelectorAll('.this')) {
+      if (+date.innerText === today.getDate()) {
+        date.classList.add('today');
+        break;
+      }
+    }
+  }
+};
+
+renderCalender();
+
+const prevMonth = () => {
+  date.setMonth(date.getMonth() - 1);
+  renderCalender();
+};
+
+const nextMonth = () => {
+  date.setMonth(date.getMonth() + 1);
+  renderCalender();
+};
+
+const goToday = () => {
+  date = new Date();
+  renderCalender();
+};
+</script>
+  </body>
+</html>

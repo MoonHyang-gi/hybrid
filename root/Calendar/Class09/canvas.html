@@ -11,10 +11,14 @@
 <img src="moon_002.png" alt="">
 <canvas id="btnCanvas" width="300" height="300"></canvas>
 <img src="moon_002.png" alt="">
+
+
 <script>
 var canvas = document.getElementById('btnCanvas');
 var ctx = canvas.getContext("2d");
-var btnbox;
+
+var x;
+var y;
 
 ctx.beginPath();
 ctx.fillStyle = 'white';
@@ -25,38 +29,65 @@ ctx.fillRect(110, 130, 80, 50);
 // ctx.fillText = ('Button', 110, 130, 80, 50);
 
 canvas.onmousemove = function (event) {
-  const x = event.clientX - ctx.canvas.offsetLeft;
-  const y = event.clientY - ctx.canvas.offsetTop;
+  x = event.clientX - ctx.canvas.offsetLeft;
+  y = event.clientY - ctx.canvas.offsetTop;
+}
 
-  ctx.fillStyle = "green";
-  ctx.fillRect(110, 130, 80, 50);
+class btnbox{
+  constructor(posx, posy, w, h){
+    this.posX = posx;
+    this.posY = posy;
+    this.width = w;
+    this.height = h;
+  }
 
-  if(x<110 || y<80){
-    ctx.fillStyle = "white";
-    ctx.fillRect(110, 130, 80, 50);
+  mouseOnBtn()
+  {
+    if((x >= this.posX && x <= this.posX + this.width) && (y >= this.posY && y <= this.posY + this.height))
+    {
+      ctx.fillStyle = "green";
+      ctx.fillRect(110, 130, 80, 50);
+    }
+    else if((x < this.posX || x > this.posX + this.width) || (y < this.posY || y > this.posY + this.height))
+    {
+      ctx.fillStyle = "white";
+      ctx.fillRect(110, 130, 80, 50);
+    }
+  }
+
+  btnClick(){
+    if((x >= this.posX && x <= this.posX + this.width) && (y >= this.posY && y <= this.posY + this.height))
+    {
+      ctx.fillstyle = "pink";
+      ctx.fillRect(110, 130, 80, 50);
+    }
   }
 }
 
+var button = new btnbox(110, 130, 80, 50);
+
+function mouseOn() {
+  button.mouseOnBtn();
+}
 
 canvas.onclick = function (event) {
-  const x = event.clientX - ctx.canvas.offsetLeft;
-  const y = event.clientY - ctx.canvas.offsetTop;
-
-  ctx.fillStyle = "pink";
-  ctx.fillRect(110, 130, 80, 50);
+  button.btnClick();
 }
+
+
+// canvas.onclick = function (event) {
+//   const x = event.clientX - ctx.canvas.offsetLeft;
+//   const y = event.clientY - ctx.canvas.offsetTop;
+//
+//   ctx.fillStyle = "pink";
+//   ctx.fillRect(110, 130, 80, 50);
+// }
 
 // if(mouseover){
 //
 //   ctx.fillStyle = 'red';
 //   ctx.fillRect(110, 130, 80, 50);
 // }
-
-
-
-
-
-
 
 
 

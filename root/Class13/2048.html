@@ -4,19 +4,29 @@
 </head>
 <body>
     <style>
-        #app{width: 582px; height: 582px; background-color: beige; 
+        #title{font-size: 40px; font-weight: bold;}
+        #score{font-size: 20px; width: 300px; height: 30px;
+            border: 2px solid black; }
+        #cover{width: 650px;height: 650px; position:absolute; text-align: center;
+            font-size: 40px; line-height: 700px; display: inline-block; top: 200px; 
+            background-color: rgb(184, 171, 129, 0.50); margin-left: -325px; font-weight: bold;}
+        #btn{width: 100px; height: 60px;}
+        #app{width: 582px; height: 582px; background-color: beige;
             display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
             grid-template-rows: 1fr 1fr 1fr 1fr;
             grid-gap: 10px; padding: 10px; border-radius: 20px; font-size: 50px;
             position: relative;}
         .bg_block{background-color: burlywood; border-radius: 20px; text-align: center;}
-        .box{position:absolute; top: 20px; left: 20px; width: 120px; height: 120px; background-color: brown; 
-            text-align: center; border-radius: 20px; }
+        /* .box{position:absolute; top: 20px; left: 20px; width: 120px; height: 120px; background-color: brown; 
+            text-align: center; border-radius: 20px; } */
     </style>
     <script src="https://unpkg.com/vue@3"></script>
-
     <center>
-    <div id="app">
+        <br><div id="title">2048</div><br>
+        <div id="score">score: </div><br><br>
+
+    <br><br><div id="app">
+        <!-- <div class="bg_block" v-for = "index in bg_block_count"> -->
         <div class="bg_block" id="box1"></div>
         <div class="bg_block" id="box2"></div>
         <div class="bg_block" id="box3"></div>
@@ -36,7 +46,11 @@
         <div class="bg_block" id="box14"></div>
         <div class="bg_block" id="box15"></div>
         <div class="bg_block" id="box16"></div>
-
+    </div>
+    <div id="cover">
+    </div>
+    <br><br><button id="btn" onclick="init()">START</button>
+    
         <!-- <div class="bg_block" v-for = "index in bg_block_count">
              {{index}}</div> -->
         <!-- <div class="box"></div>
@@ -56,8 +70,7 @@
         <div class="box"></div>
         <div class="box"></div> -->
     </div>
-</center>
-
+    </center>
     <script>
         const {createApp} = Vue; 
         createApp({ 
@@ -156,14 +169,16 @@
 // }
 
 var box = document.getElementsByClassName("bg_block");
+var score = 0;
+var gameState = false;
 
 var boxID = Array(Array("box1", "box2", "box3", "box4"), Array("box5", "box6", "box7", "box8"),
                 Array("box9", "box10", "box11", "box12"), Array("box13", "box14", "box15", "box16"));
 var board = Array(Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0));
 
 //키보드 입력
-document.onkeydown = keyDownEventHandler; 
-function keyDownEventHandler(e){
+document.onkeyup = keyUpEventHandler; 
+function keyUpEventHandler(e){
     switch(e.keyCode){
         case 38: moveDir(0); break; //up
         case 40: moveDir(1); break; //down
@@ -172,27 +187,52 @@ function keyDownEventHandler(e){
     }
 }
 
-init();
-//초기 설정
+if(gameState=false)
+{
+    document.getElementById("cover").style.display = 'block';
+    init();
+}
+
 function init(){
+    gameState =true;
+    document.getElementById("cover").style.display = 'none';
+    start();
+}
+
+
+function start(){ 
+    score=0; 
     for(var i=0; i<4; i++){
         for(var j=0; j<4; j++){
             board[i][j] = 0;
         }
     }
-    for(var i=0; i<2; i++){
+    var rand = parseInt(Math.random() * 2);
+    if(rand == 0){
         var rand = parseInt(Math.random()*16);
         var x = rand % 4;
         var y = parseInt(rand / 4);
-        if(board[y][x] == 0){
-            board[y][x] = getNewNum();
-        }else i--;
+        if(board[x][y] == 0){
+            board[x][y] = getNewNum();
+        
+    }
+    }else{
+        for(var i=0; i<2; i++){
+            var rand = parseInt(Math.random()*16);
+            var x = rand % 4;
+            var y = parseInt(rand / 4);
+            if(board[x][y] == 0){
+                board[x][y] = (i+1)*2;
+            }
+        }
     }
     update();
 }
 
+
 //업데이트
 function update(){
+    document.getElementById("score").innerHTML= ('Score: '+ score);
     for(var i=0; i<4; i++){
         for(var j=0; j<4; j++){
             var cell = document.getElementById(boxID[i][j]);
@@ -301,7 +341,13 @@ function move(){
             }
         }
     }
-    if(isMoved) generate();
+    if(isMoved){
+        generate();
+        score++;
+    }else check();
+    // else{
+    //     gameOver();
+    // }
 }
 
 //숫자 생성
@@ -336,17 +382,36 @@ function getNewNum(){
     if(rand == 0){
         return 4;
     }
+    else
     return 2;
 }
 
-// function setNum(){
-//     for(var i=0; i<4; i++){
-//         for(var j=0; j<4; j++){
-//             div[i].innerHTML = board[i] != 0 ? board[i] : "";
-//         }
-//     }
-// }
+function check(){
+    for(var i=0;i<4;i++){
+        var colCheck = board[i][0];
+        if(colCheck==0) return;
+        for(var j=1;j<4;j++){
+            if(board[i][j]==colCheck || board[i][j]==0) return;
+            else colCheck = board[i][j];
+        }
+    }
+    for(var i=0;i<4;i++){
+        var rowCheck = board[0][i];
+        if(rowCheck==0) return;
+        for(var j=1;j<4;j++){
+            if(board[j][i]==rowCheck || board[j][i]==0) return;
+            else rowCheck = board[j][i];
+        }
+    }
+    gameOver();
+}
 
+
+function gameOver(){
+    document.getElementById("cover").style.display = 'inline-block';
+    document.getElementById("cover").innerHTML = ("Game Over");
+    gameState=false;
+}
        
     </script>
 </body>

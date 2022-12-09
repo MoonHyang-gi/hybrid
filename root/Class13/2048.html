@@ -26,27 +26,31 @@
         <div id="score">score: </div><br><br>
 
     <br><br><div id="app">
-        <div class="bg_block" v-for = "index in bg_block_count">
-        <!-- <div class="box" id="box1"></div>
-        <div class="box" id="box2"></div>
-        <div class="box" id="box3"></div>
-        <div class="box" id="box4"></div>
+        <!-- <div class="bg_block" v-for = "index in bg_block_count"> -->
+        <div class="bg_block" id="box1"></div>
+        <div class="bg_block" id="box2"></div>
+        <div class="bg_block" id="box3"></div>
+        <div class="bg_block" id="box4"></div>
 
-        <div class="box" id="box5"></div>
-        <div class="box" id="box6"></div>
-        <div class="box" id="box7"></div>
-        <div class="box" id="box8"></div>
+        <div class="bg_block" id="box5"></div>
+        <div class="bg_block" id="box6"></div>
+        <div class="bg_block" id="box7"></div>
+        <div class="bg_block" id="box8"></div>
 
-        <div class="box" id="box9"></div>
-        <div class="box" id="box10"></div>
-        <div class="box" id="box11"></div>
-        <div class="box" id="box12"></div>
+        <div class="bg_block" id="box9"></div>
+        <div class="bg_block" id="box10"></div>
+        <div class="bg_block" id="box11"></div>
+        <div class="bg_block" id="box12"></div>
 
-        <div class="box" id="box13"></div>
-        <div class="box" id="box14"></div>
-        <div class="box" id="box15"></div>
-        <div class="box" id="box16"></div> -->
+        <div class="bg_block" id="box13"></div>
+        <div class="bg_block" id="box14"></div>
+        <div class="bg_block" id="box15"></div>
+        <div class="bg_block" id="box16"></div>
     </div>
+    <div id="cover">
+    </div>
+    <br><br><button id="btn" onclick="init()">START</button>
+    
         <!-- <div class="bg_block" v-for = "index in bg_block_count">
              {{index}}</div> -->
         <!-- <div class="box"></div>
@@ -66,9 +70,6 @@
         <div class="box"></div>
         <div class="box"></div> -->
     </div>
-    <div id="cover">
-    </div>
-    <br><br><button id="btn" onclick="blockmap.init()">START</button>
     </center>
     <script>
         const {createApp} = Vue; 
@@ -85,350 +86,515 @@
     </script>
 
     <script>
-// var box = document.getElementsByClassName("bg_block");
-// var score = 0;
-// var gameState = false;
 
-// var boxID = Array(Array("box1", "box2", "box3", "box4"), Array("box5", "box6", "box7", "box8"),
-//                 Array("box9", "box10", "box11", "box12"), Array("box13", "box14", "box15", "box16"));
-// var board = Array(Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0));
-
-var pool = new Array();
-for(var i=0; i<pool.length; i++){
-    pool.push(new Block(2));
-}
-
-class BlockMap{
-    constructor(row,column){
-        //this.Row = row;
-        //this.Column = column;
-        this.Map = Array.from(Array(row), () => Array(column).fill(0));
-        this.div_app = document.getElementById("app");
-        if(this.gameState==false){
-            document.getElementById("cover").style.display = 'inline-block';
-            this.init();
-        }
-    }
-
-    addblock(x, y, block){
-        block.setactive(true);
-        block.setcoord(x, y);
-        this.Map[x][y] = block;
-        this.div_app.appendChild(block.Element);
-    }
-    // addrandomblock(block){
-    //     block.setactive(true);
-
-    //     //랜덤 블록 위치 생성
-
-    //     block.setcoord(x, y);
-    //     this.Map[x][y] = block;
-    //     this.div_app.appendChild(block.div_element)
-    // }
-
-    removeblock(x, y){
-        pool.push(this.Map[x][y]);
-        this.Map[x][y] = null;
-    }
-
-    init(){
-        this.gameState = true;
-        this.score=0; 
-        document.getElementById("cover").style.display = 'none';
-        document.getElementById("score").innerHTML = "Score: " + this.score.toString();
-
-        this.addblock(1,1, new Block(2));
-
-        for(var i=0; i<4; i++){
-            for(var j=0; j<4; j++){
-                this.Map[i][j] = null;
-            }
-        }
-        
-        var rand = parseInt(Math.random() * 2);
-        if(rand == 0){
-            var rand = parseInt(Math.random()*16);
-            var x = rand % 4;
-            var y = parseInt(rand / 4);
-            if(this.Map[x][y] == null){
-                this.Map[x][y] = this.getNewNum();
-            
-        }
-        }else{
-            for(var i=0; i<2; i++){
-                var rand = parseInt(Math.random()*16);
-                var x = rand % 4;
-                var y = parseInt(rand / 4);
-                if(this.Map[x][y] == null){
-                    this.Map[x][y] = (i+1)*2;
-                }
-            }
-        }
-    }
-
-    // moveleft(){}
-    // moveright(){}
-    // moveup(){}
-    // movedown(){}
-
-    // draw(){
-    //     // for(let i=0; i<this.Row; i++){
-    //     //     for(let j=0; j<this.Column; j++){
-    //     //         this.Map[x][y];
-    //     //     }
-    //     // }
-    // }
-
-    // 보드판 이동 방향에 따른 회전 컨트롤
-    Compute(opt){ //보드판 회전 //이동연산
-        switch(opt){
-            case 0: this.move(); break; //up
-            case 1: this.rotate(2); this.move(); this.rotate(2); break; //down
-            case 2: this.rotate(1); this.move(); this.rotate(3); break; //left  
-            case 3: this.rotate(3); this.move(); this.rotate(1); break; //right
-        }
-        //업데이트
-    
-        document.getElementById("score").innerHTML= ('Score: '+ this.score.toString());
-        for(var i=0; i<4; i++){
-            for(var j=0; j<4; j++){
-                if(this.Map[i][j] == null) continue;
-                this.Map[i][j].setcoord(j,i);
-            }
-        }
-    }
-
-    rotate(n){
-        while(n--){
-            var tempBoard 
-            = Array.from(Array(4), ()=> Array(4).fill(null)); //여기
-            for(var i=0;i<4;i++)
-                for(var j=0;j<4;j++)
-                    tempBoard[i][j]=this.Map[i][j];
-            for(var i=0;i<4;i++)
-                for(var j=0;j<4;j++)
-                    this.Map[j][3-i]=tempBoard[i][j];
-
-        }
-    }
-
-    // 보드판 이동
-    move(){
-        var isMoved=false;
-        var isPlused 
-        = Array(Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0));
-        for(var i=1;i<4;i++){
-            for(var j=0;j<4;j++){
-                if(this.Map[i][j]==null) continue;
-                var tempY = i-1;
-                while(tempY>0 && this.Map[tempY][j]==null) tempY--;
-                if(this.Map[tempY][j]==null){
-                    this.Map[tempY][j]=this.Map[i][j];
-                    this.Map[i][j]=0;
-                    isMoved=true;
-                }
-                else if(this.Map[tempY][j]!=this.Map[i][j]){
-                    if(tempY+1==i) continue;
-                    this.Map[tempY+1][j]=this.Map[i][j];
-                    this.Map[i][j]=null;
-                    isMoved=true;
-                }
-                else{
-                    if(isPlused[tempY][j]==null){  //여기
-                        this.Map[tempY][j]*=2; 
-                        this.Mapd[i][j]=null;
-                        isPlused[tempY][j]=1;
-                        isMoved=true;
-                    }
-                    else{
-                        this.Map[tempY+1][j]=this.Map[i][j];
-                        this.Map[i][j]=null;
-                        isMoved=true;
-                    }
-                }
-            }
-        }
-        if(isMoved){
-            this.score = this.score++;
-            this.generate();
-            
-        }else this.check();
-    }
-
-    //숫자 생성
-    generate(){
-        var zeroNum = 0;
-        for(var i=0; i<4; i++){
-            for(var j=0; j<4; j++){
-                if(this.Map[i][j] == null)
-                {
-                    zeroNum++;
-                }
-            }
-        }
-        while(true){
-            for(var i=0; i<4; i++){
-                for(var j=0; j<4; j++){
-                    if(this.Map[i][j]==null){
-                        var rand = parseInt(Math.random() * zeroNum);
-                        if(rand == 0){
-                            this.Map[i][j] = getNewNum(); //여기
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //숫자 생성 2, 4 확률
-    getNewNum(){
-        var rand = parseInt(Math.random() * 10);
-        if(rand == 0){
-            return 4;
-        }
-        else
-        return 2;
-    }
-
-    check(){
-        for(var i=0;i<4;i++){
-            var colCheck = this.Map[i][0];
-            if(colCheck==null) return;
-            for(var j=1;j<4;j++){
-                if(this.Map[i][j]==colCheck || this.Map[i][j]==null) return;
-                else colCheck = this.Map[i][j];
-            }
-        }
-        for(var i=0;i<4;i++){
-            var rowCheck = this.Map[0][i];
-            if(rowCheck==null) return;
-            for(var j=1;j<4;j++){
-                if(this.Map[j][i]==rowCheck || this.Map[j][i]==null) return;
-                else rowCheck = this.Map[j][i];
-            }
-        }
-        this.gameOver();
-    }
-
-
-    gameOver(){
-        this.gameState=false;
-        document.getElementById("cover").style.display = 'inline-block';
-        document.getElementById("cover").innerHTML = ("Game Over");
-    }
-}
-
-var blockmap = new BlockMap(4, 4);
-
-class Block{
-    constructor(value){
-        this.Value = value;
-        this.Active = false;
-        this.XPos = 20;
-        this.YPos = 20;
-        this.Element = document.createElement("div");
-        this.Element.setAttribute("class", "bg_block");
-        //this.div_element.appendChild(document.createTextNode("2"));
-        this.Element.append(this.Value);
-    }
-
-    changevalue(value){
-        this.Value = value;
-        this.Element.innerHTML = this.Value;
-    }
-    setactive(isActivated){
-        this.Element.style.display = "block";
-        this.Active = isActivated;
-    }
-    setcoord(x, y){
-        this.XPos += 150 * x;
-        this.YPos += 150 * y;
-        // this.div_element.style.left = this.XPos;
-        // this.div_element.style.right = this.YPos;
-    }
-    removeblock(){
-        this.Element.style.display = "none";
-        this.Active = false;
-        this.XPos = 20;
-        this.YPos = 20;
-        this.changevalue(2);
-    }
-}
-
-window.onkeydown = keylog;
-
-// function gameStart(){
-//     blockmap.addblock(Math.floor(Math.random() * 4), Math.floor(Math.random() * 4), new Block(2));
+// var pool = new Array();
+// for(var i=0; i<pool.length; i++){
+//     pool.push(new Block(2));
 // }
 
-// //키보드 입력
-// document.onkeyup = keyUpEventHandler; 
-// function keyUpEventHandler(e){
-//     switch(e.keyCode){
-//         case 38: moveDir(0); break; //up
-//         case 40: moveDir(1); break; //down
-//         case 37: moveDir(2); break; //left
-//         case 39: moveDir(3); break; //right
+// class BlockMap{
+//     constructor(row,column){
+//         //this.Row = row;
+//         //this.Column = column;
+//         this.Map = Array.from(Array(row), () => Array(column).fill(0));
+//         this.div_app = document.getElementById("app");
+//         if(this.gameState==false){
+//             document.getElementById("cover").style.display = 'inline-block';
+//             this.init();
+//         }
+//     }
+
+//     addblock(x, y, block){
+//         block.setactive(true);
+//         block.setcoord(x, y);
+//         this.Map[x][y] = block;
+//         this.div_app.appendChild(block.Element);
+//     }
+//     // addrandomblock(block){
+//     //     block.setactive(true);
+
+//     //     //랜덤 블록 위치 생성
+
+//     //     block.setcoord(x, y);
+//     //     this.Map[x][y] = block;
+//     //     this.div_app.appendChild(block.div_element)
+//     // }
+
+//     removeblock(x, y){
+//         pool.push(this.Map[x][y]);
+//         this.Map[x][y] = null;
+//     }
+
+//     init(){
+//         this.gameState = true;
+//         this.score=0; 
+//         document.getElementById("cover").style.display = 'none';
+//         document.getElementById("score").innerHTML = "Score: " + this.score.toString();
+
+//         this.addblock(1,1, new Block(2));
+
+//         for(var i=0; i<4; i++){
+//             for(var j=0; j<4; j++){
+//                 this.Map[i][j] = null;
+//             }
+//         }
+        
+//         var rand = parseInt(Math.random() * 2);
+//         if(rand == 0){
+//             var rand = parseInt(Math.random()*16);
+//             var x = rand % 4;
+//             var y = parseInt(rand / 4);
+//             if(this.Map[x][y] == null){
+//                 this.Map[x][y] = this.getNewNum();
+            
+//         }
+//         }else{
+//             for(var i=0; i<2; i++){
+//                 var rand = parseInt(Math.random()*16);
+//                 var x = rand % 4;
+//                 var y = parseInt(rand / 4);
+//                 if(this.Map[x][y] == null){
+//                     this.Map[x][y] = (i+1)*2;
+//                 }
+//             }
+//         }
+//     }
+
+//     // moveleft(){}
+//     // moveright(){}
+//     // moveup(){}
+//     // movedown(){}
+
+//     // draw(){
+//     //     // for(let i=0; i<this.Row; i++){
+//     //     //     for(let j=0; j<this.Column; j++){
+//     //     //         this.Map[x][y];
+//     //     //     }
+//     //     // }
+//     // }
+
+//     // 보드판 이동 방향에 따른 회전 컨트롤
+//     Compute(opt){ //보드판 회전 //이동연산
+//         switch(opt){
+//             case 0: this.move(); break; //up
+//             case 1: this.rotate(2); this.move(); this.rotate(2); break; //down
+//             case 2: this.rotate(1); this.move(); this.rotate(3); break; //left  
+//             case 3: this.rotate(3); this.move(); this.rotate(1); break; //right
+//         }
+//         //업데이트
+    
+//         document.getElementById("score").innerHTML= ('Score: '+ this.score.toString());
+//         for(var i=0; i<4; i++){
+//             for(var j=0; j<4; j++){
+//                 if(this.Map[i][j] == null) continue;
+//                 this.Map[i][j].setcoord(j,i);
+//             }
+//         }
+//     }
+
+//     rotate(n){
+//         while(n--){
+//             var tempBoard 
+//             = Array.from(Array(4), ()=> Array(4).fill(null)); //여기
+//             for(var i=0;i<4;i++)
+//                 for(var j=0;j<4;j++)
+//                     tempBoard[i][j]=this.Map[i][j];
+//             for(var i=0;i<4;i++)
+//                 for(var j=0;j<4;j++)
+//                     this.Map[j][3-i]=tempBoard[i][j];
+
+//         }
+//     }
+
+//     // 보드판 이동
+//     move(){
+//         var isMoved=false;
+//         var isPlused 
+//         = Array(Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0));
+//         for(var i=1;i<4;i++){
+//             for(var j=0;j<4;j++){
+//                 if(this.Map[i][j]==null) continue;
+//                 var tempY = i-1;
+//                 while(tempY>0 && this.Map[tempY][j]==null) tempY--;
+//                 if(this.Map[tempY][j]==null){
+//                     this.Map[tempY][j]=this.Map[i][j];
+//                     this.Map[i][j]=0;
+//                     isMoved=true;
+//                 }
+//                 else if(this.Map[tempY][j]!=this.Map[i][j]){
+//                     if(tempY+1==i) continue;
+//                     this.Map[tempY+1][j]=this.Map[i][j];
+//                     this.Map[i][j]=null;
+//                     isMoved=true;
+//                 }
+//                 else{
+//                     if(isPlused[tempY][j]==null){  //여기
+//                         this.Map[tempY][j]*=2; 
+//                         this.Mapd[i][j]=null;
+//                         isPlused[tempY][j]=1;
+//                         isMoved=true;
+//                     }
+//                     else{
+//                         this.Map[tempY+1][j]=this.Map[i][j];
+//                         this.Map[i][j]=null;
+//                         isMoved=true;
+//                     }
+//                 }
+//             }
+//         }
+//         if(isMoved){
+//             this.score = this.score++;
+//             this.generate();
+            
+//         }else this.check();
+//     }
+
+//     //숫자 생성
+//     generate(){
+//         var zeroNum = 0;
+//         for(var i=0; i<4; i++){
+//             for(var j=0; j<4; j++){
+//                 if(this.Map[i][j] == null)
+//                 {
+//                     zeroNum++;
+//                 }
+//             }
+//         }
+//         while(true){
+//             for(var i=0; i<4; i++){
+//                 for(var j=0; j<4; j++){
+//                     if(this.Map[i][j]==null){
+//                         var rand = parseInt(Math.random() * zeroNum);
+//                         if(rand == 0){
+//                             this.Map[i][j] = getNewNum(); //여기
+//                             return;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     //숫자 생성 2, 4 확률
+//     getNewNum(){
+//         var rand = parseInt(Math.random() * 10);
+//         if(rand == 0){
+//             return 4;
+//         }
+//         else
+//         return 2;
+//     }
+
+//     check(){
+//         for(var i=0;i<4;i++){
+//             var colCheck = this.Map[i][0];
+//             if(colCheck==null) return;
+//             for(var j=1;j<4;j++){
+//                 if(this.Map[i][j]==colCheck || this.Map[i][j]==null) return;
+//                 else colCheck = this.Map[i][j];
+//             }
+//         }
+//         for(var i=0;i<4;i++){
+//             var rowCheck = this.Map[0][i];
+//             if(rowCheck==null) return;
+//             for(var j=1;j<4;j++){
+//                 if(this.Map[j][i]==rowCheck || this.Map[j][i]==null) return;
+//                 else rowCheck = this.Map[j][i];
+//             }
+//         }
+//         this.gameOver();
+//     }
+
+
+//     gameOver(){
+//         this.gameState=false;
+//         document.getElementById("cover").style.display = 'inline-block';
+//         document.getElementById("cover").innerHTML = ("Game Over");
 //     }
 // }
 
-    function keyArrowRight(){
-        //box[0].style.left  = '463px';
-        let blocks = document.getElementsByClassName("box");
-        for(let i=0; i<blocks.length; i++){
-            blocks[i].style.left += 463;
+// var blockmap = new BlockMap(4, 4);
+
+// class Block{
+//     constructor(value){
+//         this.Value = value;
+//         this.Active = false;
+//         this.XPos = 20;
+//         this.YPos = 20;
+//         this.Element = document.createElement("div");
+//         this.Element.setAttribute("class", "bg_block");
+//         //this.div_element.appendChild(document.createTextNode("2"));
+//         this.Element.append(this.Value);
+//     }
+
+//     changevalue(value){
+//         this.Value = value;
+//         this.Element.innerHTML = this.Value;
+//     }
+//     setactive(isActivated){
+//         this.Element.style.display = "block";
+//         this.Active = isActivated;
+//     }
+//     setcoord(x, y){
+//         this.XPos += 150 * x;
+//         this.YPos += 150 * y;
+//         // this.div_element.style.left = this.XPos;
+//         // this.div_element.style.right = this.YPos;
+//     }
+//     removeblock(){
+//         this.Element.style.display = "none";
+//         this.Active = false;
+//         this.XPos = 20;
+//         this.YPos = 20;
+//         this.changevalue(2);
+//     }
+// }
+
+var box = document.getElementsByClassName("bg_block");
+var score = 0;
+var gameState = false;
+
+var boxID = Array(Array("box1", "box2", "box3", "box4"), Array("box5", "box6", "box7", "box8"),
+                Array("box9", "box10", "box11", "box12"), Array("box13", "box14", "box15", "box16"));
+var board = Array(Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0), Array(0, 0, 0, 0));
+
+//키보드 입력
+document.onkeyup = keyUpEventHandler; 
+function keyUpEventHandler(e){
+    switch(e.keyCode){
+        case 38: moveDir(0); break; //up
+        case 40: moveDir(1); break; //down
+        case 37: moveDir(2); break; //left
+        case 39: moveDir(3); break; //right
+    }
+}
+
+if(gameState=false)
+{
+    document.getElementById("cover").style.display = 'block';
+    init();
+}
+
+function init(){
+    gameState =true;
+    document.getElementById("cover").style.display = 'none';
+    start();
+}
+
+
+function start(){ 
+    score=0; 
+    for(var i=0; i<4; i++){
+        for(var j=0; j<4; j++){
+            board[i][j] = 0;
         }
     }
-
-    function keyArrowLeft(){
-        //box[0].style.left  = '20px';
-        let blocks = document.getElementsByClassName("box");
-        for(let i=0; i<blocks.length; i++){
-            blocks[i].style.left -= 20;
+    var rand = parseInt(Math.random() * 2);
+    if(rand == 0){
+        var rand = parseInt(Math.random()*16);
+        var x = rand % 4;
+        var y = parseInt(rand / 4);
+        if(board[x][y] == 0){
+            board[x][y] = getNewNum();
+        
+    }
+    }else{
+        for(var i=0; i<2; i++){
+            var rand = parseInt(Math.random()*16);
+            var x = rand % 4;
+            var y = parseInt(rand / 4);
+            if(board[x][y] == 0){
+                board[x][y] = (i+1)*2;
+            }
         }
     }
+    update();
+}
 
-    function keyArrowUp(){
-        //box[0].style.top  = '20px';
-        let blocks = document.getElementsByClassName("box");
-        for(let i=0; i<blocks.length; i++){
-            blocks[i].style.left -= 463;
+
+//업데이트
+function update(){
+    document.getElementById("score").innerHTML= ('Score: '+ score);
+    for(var i=0; i<4; i++){
+        for(var j=0; j<4; j++){
+            var cell = document.getElementById(boxID[i][j]);
+            cell.innerHTML = board[i][j] == 0 ? "" : board[i][j];
         }
     }
+}
 
-    function keyArrowDown(){
-        //box[0].style.top  = '463px';
-        let blocks = document.getElementsByClassName("box");
-        for(let i=0; i<blocks.length; i++){
-            blocks[i].style.left += 463;
-        }     
-    }
-
-    // function keyEnter(){
-    //     blockmap.addblock(1,1, new Block(2));
+    // function keyArrowRight(){
+    //     box[0].style.left  = '463px';   
     // }
 
-    function keylog(e){
-        console.log(e.key);
-        switch(e.key){
-            case 'ArrowRight':
-                keyArrowRight();
-                break;
-            case 'ArrowLeft':
-                keyArrowLeft();
-                break;
-            case 'ArrowUp':
-                keyArrowUp();
-                break;
-            case 'ArrowDown':
-                keyArrowDown();
-                break;
-            default:
-                break;
+    // function keyArrowLeft(){
+    //     box[0].style.left  = '20px';
+    // }
+
+    // function keyArrowUp(){
+    //     box[0].style.top  = '20px';
+    // }
+
+    // function keyArrowDown(){
+    //     box[0].style.top  = '463px';     
+    //     }
+
+    // function keylog(e){
+    //     console.log(e.key);
+    //     switch(e.key){
+    //         case 'ArrowRight':
+    //             keyArrowRight();
+    //             break;
+    //         case 'ArrowLeft':
+    //             keyArrowLeft();
+    //             break;
+    //         case 'ArrowUp':
+    //             keyArrowUp();
+    //             break;
+    //         case 'ArrowDown':
+    //             keyArrowDown();
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
+    
+//window.onkeydown = keylog;
+
+// 보드판 이동 방향에 따른 회전 컨트롤
+
+function moveDir(opt){ //보드판 회전
+    switch(opt){
+        case 0: move(); break; //up
+        case 1: rotate(2); move(); rotate(2); break; //down
+        case 2: rotate(1); move(); rotate(3); break; //left  
+        case 3: rotate(3); move(); rotate(1); break; //right
+    }
+    update();
+}
+
+function rotate(n){
+    while(n--){
+        var tempBoard 
+        = Array(Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0));
+        for(var i=0;i<4;i++)
+            for(var j=0;j<4;j++)
+                tempBoard[i][j]=board[i][j];
+        for(var i=0;i<4;i++)
+            for(var j=0;j<4;j++)
+                board[j][3-i]=tempBoard[i][j];
+
+    }
+}
+
+// 보드판 이동
+function move(){
+    var isMoved=false;
+    var isPlused 
+    = Array(Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0),Array(0,0,0,0));
+    for(var i=1;i<4;i++){
+        for(var j=0;j<4;j++){
+            if(board[i][j]==0) continue;
+            var tempY = i-1;
+            while(tempY>0 && board[tempY][j]==0) tempY--;
+            if(board[tempY][j]==0){
+                board[tempY][j]=board[i][j];
+                board[i][j]=0;
+                isMoved=true;
+            }
+            else if(board[tempY][j]!=board[i][j]){
+                if(tempY+1==i) continue;
+                board[tempY+1][j]=board[i][j];
+                board[i][j]=0;
+                isMoved=true;
+            }
+            else{
+                if(isPlused[tempY][j]==0){
+                    board[tempY][j]*=2; 
+                    board[i][j]=0;
+                    isPlused[tempY][j]=1;
+                    isMoved=true;
+                }
+                else{
+                    board[tempY+1][j]=board[i][j];
+                    board[i][j]=0;
+                    isMoved=true;
+                }
+            }
         }
     }
+    if(isMoved){
+        generate();
+        score++;
+    }else check();
+    // else{
+    //     gameOver();
+    // }
+}
 
+//숫자 생성
+function generate(){
+    var zeroNum = 0;
+    for(var i=0; i<4; i++){
+        for(var j=0; j<4; j++){
+            if(board[i][j] == 0)
+            {
+                zeroNum++;
+            }
+        }
+    }
+    while(true){
+        for(var i=0; i<4; i++){
+            for(var j=0; j<4; j++){
+                if(board[i][j]==0){
+                    var rand = parseInt(Math.random() * zeroNum);
+                    if(rand == 0){
+                        board[i][j] = getNewNum();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//숫자 생성 2, 4 확률
+function getNewNum(){
+    var rand = parseInt(Math.random() * 10);
+    if(rand == 0){
+        return 4;
+    }
+    else
+    return 2;
+}
+
+function check(){
+    for(var i=0;i<4;i++){
+        var colCheck = board[i][0];
+        if(colCheck==0) return;
+        for(var j=1;j<4;j++){
+            if(board[i][j]==colCheck || board[i][j]==0) return;
+            else colCheck = board[i][j];
+        }
+    }
+    for(var i=0;i<4;i++){
+        var rowCheck = board[0][i];
+        if(rowCheck==0) return;
+        for(var j=1;j<4;j++){
+            if(board[j][i]==rowCheck || board[j][i]==0) return;
+            else rowCheck = board[j][i];
+        }
+    }
+    gameOver();
+}
+
+
+function gameOver(){
+    document.getElementById("cover").style.display = 'inline-block';
+    document.getElementById("cover").innerHTML = ("Game Over");
+    gameState=false;
+}
+       
     </script>
 </body>
 </html>
